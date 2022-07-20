@@ -14,62 +14,55 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Set node
-        uses: actions/setup-node@v3
+      - uses: pnpm/action-setup@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: 16.x
-
-      - name: Setup
-        run: npm i -g pnpm
+          cache: pnpm
 
       - name: Install
-        run: pnpm i
+        run: pnpm install
 
       - name: Lint
-        run: pnpm lint
+        run: pnpm run lint
 
   typecheck:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Set node
-        uses: actions/setup-node@v3
+      - uses: pnpm/action-setup@2
+      - uses: actions/setup-node@v3
         with:
           node-version: 16.x
-
-      - name: Setup
-        run: npm i -g pnpm
+          cache: pnpm
 
       - name: Install
-        run: pnpm i
+        run: pnpm install
 
       - name: Typecheck
-        run: pnpm typecheck
+        run: pnpm run typecheck
 
   test:
     runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
-        node: [14.x, 16.x]
+        node-version: [14.x, 16.x]
         os: [ubuntu-latest, windows-latest, macos-latest]
       fail-fast: false
 
     steps:
       - uses: actions/checkout@v3
-      - name: Set node ${{ matrix.node }}
+      - uses: pnpm/action-setup@2
+      - name: Set node ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node }}
-
-      - name: Setup
-        run: npm i -g pnpm
+          node-version: ${{ matrix.node-version }}
+          registry-url: https://registry.npmjs.org/
+          cache: pnpm
 
       - name: Install
-        run: pnpm i
-
-      - name: Build
-        run: pnpm build
+        run: pnpm install
 
       - name: Test
-        run: pnpm test
+        run: pnpm run test
